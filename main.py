@@ -30,7 +30,7 @@ df['married'] = df['married'].map({'u': 1, 'y': 0, 'l': 0})
 df = df.rename(columns={'backCustomer': 'BankCustomer'})
 df['BankCustomer'] = df['BankCustomer'].map({'g': 1, 'gg': 0, 'p': 0})
 
-# change etnicity to 0, 1, 2
+# change etnicity to White, Black, Latin, Other
 df = df.rename(columns={'etnicity': 'Ethnicity'})
 df['Ethnicity'] = df['Ethnicity'].map({'v': "White", 'h': "Black", 'z': "Other", 'o': "Other", 'n': "Other", 'ff': "Latin", 'j': "Other", 'dd': "Other", 'bb': "Other"})
 
