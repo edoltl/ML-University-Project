@@ -17,6 +17,9 @@ print(df.shape)
 df = df.dropna()
 print(df.shape)
 
+# Change X to ID
+df = df.rename(columns={'X': 'ID'})
+
 # Change column name male to Gender
 df = df.rename(columns={'male': 'Gender'})
 
