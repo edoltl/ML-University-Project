@@ -4,18 +4,7 @@ import numpy as np
 # Load data
 df = pd.read_csv('credit.csv')
 
-# describe columns type
-print(df.dtypes)
-
-# print first 5 rows
-print(df.head())
-
 ## CLEANING DATA
-
-# clean data and show how many rows are dropped
-print(df.shape)
-df = df.dropna()
-print(df.shape)
 
 # Change X to ID
 df = df.rename(columns={'X': 'ID'})
@@ -57,9 +46,48 @@ df['Citizen'] = df['Citizen'].map({'g': "byBirth", 's': "byOtherMeans", 'p': "Te
 df = df.rename(columns={'approved': 'Approved'})
 df['Approved'] = df['Approved'].map({'-': 0, '+': 1})
 
-print(df.head())
-
 ## END CLEANING DATA
+
+## Neural Network
+
+from sklearn.model_selection import train_test_split
+from sklearn.preprocessing import StandardScaler, OneHotEncoder
+from sklearn.compose import make_column_transformer
+from tensorflow.keras.models import Sequential
+from tensorflow.keras.layers import Dense
+
+
+# Pre-elaborazione dei dati
+preprocessor = make_column_transformer(
+    (StandardScaler(), ['age', 'debt', 'yearemployed', 'creditScore', 'income']),
+    (OneHotEncoder(), ['Gender', 'married', 'BankCustomer', 'Ethnicity', 'PriorDefault', 'Employed', 'DriversLicense', 'Citizen'])
+)
+
+X = df.drop('Approved', axis=1)
+X = preprocessor.fit_transform(X)
+y = df['Approved']
+
+# Divisione del dataset
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.25, random_state=42)
+
+# Creazione del modello di rete neurale
+model = Sequential()
+model.add(Dense(128, activation='relu', input_shape=(X_train.shape[1],)))
+model.add(Dense(64, activation='relu'))
+model.add(Dense(32, activation='relu'))
+model.add(Dense(1, activation='sigmoid'))
+
+# Compilazione del modello
+model.compile(loss='binary_crossentropy', optimizer='adam', metrics=['accuracy'])
+
+# Addestramento del modello
+model.fit(X_train, y_train, epochs=10, batch_size=32)
+
+# Valutazione del modello
+loss, accuracy = model.evaluate(X_test, y_test)
+print(f'Test Accuracy: {accuracy*100:.2f}%')
+
+
 
 
 
